@@ -1,0 +1,105 @@
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import { queryContent } from '#imports'
+
+const { t, locale } = useI18n();
+const highlights = await queryContent<{
+  cover: string;
+  title: string;
+  date: string;
+  technologies: string[];
+  repo?: string;
+  url?: string;
+}>(locale.value, '_highlights').find()
+</script>
+
+<i18n lang="yaml">
+en:
+  title: Some Projects I've Built
+fr:
+  title: Quelques projets
+</i18n>
+
+<template>
+  <CoreSection>
+    <CoreSectionTitle>{{ t("title") }}</CoreSectionTitle>
+    <ul>
+      <li
+        v-for="(highlight, index) in highlights"
+        :key="index"
+        class="mb-20 grid-cols-12 last:mb-0 sm:grid"
+      >
+        <div v-motion-slide-visible-once-right class="cover">
+          <img :src="`${highlight._path}/${highlight.cover}`" alt="" class="rounded-lg" />
+        </div>
+        <div v-motion-slide-visible-once-left class="content">
+          <div>
+            <h3 class="text-heading-3 font-bold text-blue-200">
+              {{ highlight.title }}
+            </h3>
+            <div class="text-primary mx-2 font-mono text-sm">
+              {{ highlight.date }}
+            </div>
+          </div>
+          <p
+            class="bg-background-light/90 relative my-3 overflow-hidden rounded-lg p-8 pl-10 text-blue-200 shadow-lg backdrop-blur-sm"
+          >
+            <span
+              class="absolute top-0 left-0 -z-10 h-full w-full scale-105 bg-cover bg-center opacity-25 blur-sm brightness-50 sm:hidden"
+              :style="{ backgroundImage: `url(${highlight.cover})` }"
+            ></span>
+            <CoreMarkdown :value="highlight" />
+          </p>
+          <ul class="mb-3 max-w-md">
+            <li
+              v-for="technology in highlight.technologies"
+              :key="technology"
+              class="text-primary mx-2 inline-block max-w-sm font-mono"
+            >
+              {{ technology }}
+            </li>
+          </ul>
+          <div>
+            <a
+              v-if="highlight.repo"
+              :href="highlight.repo"
+              aria-label="Github repository"
+              class="hover:text-primary ml-3 text-blue-200"
+            >
+              <vue-feather type="github" />
+            </a>
+            <a
+              v-if="highlight.url"
+              :href="highlight.url"
+              aria-label="project url"
+              class="hover:text-primary ml-3 text-blue-200"
+            >
+              <vue-feather type="external-link" />
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </CoreSection>
+</template>
+<style lang="scss" scoped>
+li {
+  .cover {
+    @apply col-[1_/_8] items-center hidden sm:flex;
+    grid-area: 1 / 1 / -1 / 7;
+  }
+  .content {
+    @apply col-[7_/_-1] flex flex-col items-end text-right;
+    grid-area: 1 / 6 / -1 / -1;
+  }
+  &:nth-child(odd) {
+    .cover {
+      grid-area: 1 / 6 / -1 / -1;
+    }
+    .content {
+      @apply items-start text-left;
+      grid-area: 1 / 1 / -1 / 7;
+    }
+  }
+}
+</style>
