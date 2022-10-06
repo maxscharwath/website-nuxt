@@ -39,12 +39,12 @@ fr:
           :delay="index * 100"
           class="flex h-full items-center justify-center px-4 font-mono"
         >
-          <router-link
+          <nuxt-link
             :to="link.href"
             class="hover:text-primary text-blue-200 transition duration-300 ease-out"
           >
             {{ t(link.name) }}
-          </router-link>
+          </nuxt-link>
         </li>
       </ol>
     </nav>

@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { queryContent } from '#imports'
+import { MarkdownParsedContent } from '@nuxt/content/dist/runtime/types'
 
 const { t, locale } = useI18n();
-const highlights = await queryContent<{
+interface Highlight extends MarkdownParsedContent {
   cover: string;
   title: string;
   date: string;
   technologies: string[];
   repo?: string;
   url?: string;
-}>(locale.value, '_highlights').find()
+}
+const highlights = await queryContent<Highlight>(locale.value, '_highlights')
+    .limit(1)
+    .find()
 </script>
 
 <i18n lang="yaml">
@@ -30,7 +34,7 @@ fr:
         class="mb-20 grid-cols-12 last:mb-0 sm:grid"
       >
         <div v-motion-slide-visible-once-right class="cover">
-          <img :src="`${highlight._path}/${highlight.cover}`" alt="" class="rounded-lg" />
+          <img :src="highlight.cover" alt="" class="rounded-lg" />
         </div>
         <div v-motion-slide-visible-once-left class="content">
           <div>

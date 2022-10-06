@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { queryContent } from '#imports'
+import { MarkdownParsedContent } from '@nuxt/content/dist/runtime/types'
 const { t, locale } = useI18n();
-const educations = await queryContent(locale.value, '_educations').find()
+
+interface Education extends MarkdownParsedContent {
+  title: string;
+  location: string;
+  range: string;
+  degree: string;
+}
+const educations = await queryContent<Education>(locale.value, '_educations').find()
 </script>
 
 <i18n lang="yaml">
